@@ -8,13 +8,13 @@
 import SwiftUI
 
 
-class EmojiMemoryGame{
+class EmojiMemoryGame:ObservableObject{
     
-    private var model:MemoryGame<String> = EmojiMemoryGame.createMemoryGame()
+    @Published private var model:MemoryGame<String> = EmojiMemoryGame.createMemoryGame()
     
     static func createMemoryGame() ->MemoryGame<String>{
         let emojis : Array<String> = ["👻","🎃","🕷"]
-       return MemoryGame<String>(numberOfPairsOfCards : 2) { pairIndex in
+       return MemoryGame<String>(numberOfPairsOfCards : 3) { pairIndex in
         return emojis[pairIndex]
         }
     }
@@ -28,6 +28,7 @@ class EmojiMemoryGame{
     
     //MARK: -INTENT(s)
     func choose(card: MemoryGame<String>.Card){
+        
         model.choose(card: card)
     }
     
