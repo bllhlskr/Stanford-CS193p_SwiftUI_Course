@@ -9,19 +9,25 @@ import SwiftUI
 
 struct EmojiArtDocumentView: View {
     @ObservedObject var document: EmojiArtDocument
-    
+    @State private var chosenPalette : String = ""
     var body: some View {
         VStack {
+            HStack{
+                PaletteChooser(chosenPalette: $chosenPalette, document:document)
+            
             ScrollView(.horizontal) {
                 HStack {
-                    ForEach(EmojiArtDocument.palette.map { String($0) }, id: \.self) { emoji in
+                    ForEach(chosenPalette.map { String($0) }, id: \.self) { emoji in
                         Text(emoji)
                             .font(Font.system(size: self.defaultEmojiSize))
                             .onDrag { NSItemProvider(object: emoji as NSString) }
                     }
                 }
+            }.layoutPriority(1)
+            }.onAppear{
+                self.chosenPalette = self.document.defaultPalette
             }
-            .padding(.horizontal)
+            
             GeometryReader { geometry in
                 ZStack {
                     Color.white.overlay(
@@ -44,6 +50,9 @@ struct EmojiArtDocumentView: View {
                 .gesture(self.panGesture())
                 .gesture(self.zoomGesture())
                 .edgesIgnoringSafeArea([.horizontal, .bottom])
+                .onReceive(self.document.$backgroundImage){ image in
+                    self.zoomToFit(image, in: geometry.size)
+                }
                 .onDrop(of: ["public.image","public.text"], isTargeted: nil) { providers, location in
                     // SwiftUI bug (as of 13.4)? the location is supposed to be in our coordinate system
                     // however, the y coordinate appears to be in the global coordinate system
