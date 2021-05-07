@@ -10,6 +10,13 @@ import SwiftUI
 struct EmojiArtDocumentView: View {
     @ObservedObject var document: EmojiArtDocument
     @State private var chosenPalette : String = ""
+    
+    
+    init(document : EmojiArtDocument){
+        self.document = document
+        _chosenPalette = State(wrappedValue: self.document.defaultPalette)
+    }
+    
     var body: some View {
         VStack {
             HStack{
@@ -24,8 +31,6 @@ struct EmojiArtDocumentView: View {
                     }
                 }
             }.layoutPriority(1)
-            }.onAppear{
-                self.chosenPalette = self.document.defaultPalette
             }
             
             GeometryReader { geometry in
